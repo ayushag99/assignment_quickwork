@@ -12,6 +12,10 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 # Mac default files
 .DS_Store
 
+# Ignore content in credentials.json file
+credentials.json
+token.json
+
 # Runtime data
 pids
 *.pid
