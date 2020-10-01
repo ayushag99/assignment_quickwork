@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const fs = require("fs");
-const readline = require("readline");
 const { google } = require("googleapis");
 const url = require("url");
 
@@ -74,7 +73,7 @@ const initialize = (oAuth2Client, res) => {
 			// Response with link to authorize
 			return res.json({
 				msg: "Authorize the API using the redirection link",
-				redirec: getAuthUrl(oAuth2Client),
+				redirect: getAuthUrl(oAuth2Client),
 			});
 		}
 		// Token found then set credential in oAuth2
@@ -103,7 +102,7 @@ const getNewToken = (oAuth2Client, code, res) => {
 	oAuth2Client.getToken(code, (err, token) => {
 		// If token fails to generate
 		if (err)
-			return res.json({
+			return res.status(500).json({
 				success: false,
 				msg: "Failed in generating token",
 			});
@@ -114,7 +113,7 @@ const getNewToken = (oAuth2Client, code, res) => {
 		// Store the token to disk for later program executions
 		fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
 			if (err)
-				return res.json({
+				return res.status(500).json({
 					success: false,
 					msg: "Failed in saving the token",
 				});
@@ -167,8 +166,8 @@ const sendEmail = (auth, email_details, cb) => {
 				),
 			},
 		})
-		.then((result) => cb(result))
-		.catch((err) => cb({ success: false, msg: "App is Unauthorized" }));
+		.then((result) => cb(null, result))
+		.catch((err) => cb(err, null));
 };
 
 /*
@@ -198,8 +197,19 @@ router.post("/sendemail", (req, res) => {
 	// Get parameters from body
 	const { body, to, subject } = req.body;
 	// Send Email with given parameters
-	sendEmail(oAuth2Client, { to, subject, body }, (result) => {
-		res.json(result);
+	sendEmail(oAuth2Client, { to, subject, body }, (err, result) => {
+		if (err) {
+			res.status(401).json({
+				success: false,
+				msg: "App is Unauthorized",
+			});
+		}
+		else{
+			res.json({
+				success: true,
+				result
+			})
+		}
 	});
 });
 
