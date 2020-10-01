@@ -75,7 +75,7 @@ For sending mail send a `POST` request to `localhost:3000/api/sendemail` with fo
 
 `body`: Body of Email
 
-![Clipping of how request for sending mail looks like(Postman).](https://github.com/ayushag99/assignment_quickwork/tree/master/assetspost_request.png)
+![Clipping of how request for sending mail looks like(Postman).](https://raw.githubusercontent.com/ayushag99/assignment_quickwork/master/assets/post_request.png)
 
 
 <p align="center"><em>Clipping of how request for sending mail looks like(Postman).</em></p>
