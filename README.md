@@ -37,7 +37,7 @@ Download and store the credentials in credentials.json file in home directory, a
 
 You need to give permission to the app for sending the mail from the respective accounts.
 
-- To give the permission send a get request to `localhost:3000/api/initialize`, you will response the follosing JSON response.
+- To give the permission send a get request to `localhost:3000/api/initialize`, you will recieve the following JSON response.
 
 ```iso
 {
