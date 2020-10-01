@@ -28,11 +28,12 @@ const CREDENTIAL_PATH = "credentials.json";
 
 let oAuth2Client;
 
+// setting up credentials for API Project
 fs.readFile(CREDENTIAL_PATH, (err, content) => {
 	// Credentials file is must to run the application if not found application won't run
 	if (err)
 		return console.log(
-			"ERROR: Credentials file not found, add credentials and restart"
+			"ERROR: Credentials file not found, add credentials and restart the project"
 		);
 	/* 
         if credentials are found
@@ -51,7 +52,6 @@ fs.readFile(CREDENTIAL_PATH, (err, content) => {
 		redirect_uris[0]
 	);
 });
-
 // oAuth Configuration Complete
 
 /*
@@ -61,17 +61,26 @@ fs.readFile(CREDENTIAL_PATH, (err, content) => {
 
 ######################################################################################
 */
+
+// Initialization Function
+// This function initializes the authentication token for User
+// @param
 const initialize = (oAuth2Client, res) => {
+	// Raed the token from the file
 	fs.readFile(TOKEN_PATH, (err, token) => {
+		// if token not found than authorization is required
 		if (err) {
 			// Token does not exist
+			// Response with link to authorize
 			return res.json({
 				msg: "Authorize the API using the redirection link",
 				redirec: getAuthUrl(oAuth2Client),
 			});
 		}
-		// Token found
+		// Token found then set credential in oAuth2
+
 		oAuth2Client.setCredentials(JSON.parse(token));
+		// Successfully Initialized and ready to send message
 		return res.json({
 			success: true,
 			msg: "Initialization Successful",
@@ -79,6 +88,7 @@ const initialize = (oAuth2Client, res) => {
 	});
 };
 
+// Authentication Link Generator
 const getAuthUrl = (oAuth2Client) => {
 	const authUrl = oAuth2Client.generateAuthUrl({
 		access_type: "offline",
@@ -87,8 +97,11 @@ const getAuthUrl = (oAuth2Client) => {
 	return authUrl;
 };
 
+// New token generator
+// Receive the code -> generate and save token acccordingly
 const getNewToken = (oAuth2Client, code, res) => {
 	oAuth2Client.getToken(code, (err, token) => {
+		// If token fails to generate
 		if (err)
 			return res.json({
 				success: false,
@@ -138,6 +151,8 @@ const makeEmailBody = (to, from, subject, message) => {
 		.replace(/\//g, "_");
 	return encodedMail;
 };
+
+// Function to send E-Mail
 const sendEmail = (auth, email_details, cb) => {
 	const gmail = google.gmail({ version: "v1", auth });
 	gmail.users.messages
@@ -156,20 +171,6 @@ const sendEmail = (auth, email_details, cb) => {
 		.catch((err) => cb({ success: false, msg: "App is Unauthorized" }));
 };
 
-const checkAuthorization = (oAuth2Client) => {
-	console.log(oAuth2Client);
-	if (oAuth2Client && oAuth2Client.credentials) {
-		// API is not authorized
-		// Initilaization is required first
-		console.log("Authorized");
-		return;
-	} else {
-		// API is authorized
-		console.log("Unauthorized");
-		return;
-	}
-};
-
 /*
 ######################################################################################
 
@@ -186,7 +187,7 @@ router.get("/initialize", (req, res) => {
 	// Checks if initialization and authorization is done
 	// if done -> return a success message
 	// else -> asks to give permission on the url returned by it
-	initialize(oAuth2Client, res);
+	return initialize(oAuth2Client, res);
 });
 
 // HERE:
@@ -194,8 +195,9 @@ router.get("/initialize", (req, res) => {
 // @type    POST
 // @path    /api/sendemail
 router.post("/sendemail", (req, res) => {
-	checkAuthorization(oAuth2Client);
+	// Get parameters from body
 	const { body, to, subject } = req.body;
+	// Send Email with given parameters
 	sendEmail(oAuth2Client, { to, subject, body }, (result) => {
 		res.json(result);
 	});
