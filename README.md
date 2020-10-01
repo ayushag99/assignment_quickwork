@@ -75,7 +75,7 @@ For sending mail send a `POST` request to `localhost:3000/api/sendemail` with fo
 
 `body`: Body of Email
 
-![Screenshot 2020-10-01 at 1.10.27 PM](/Users/ayush/Desktop/Assignment/assets/Screenshot 2020-10-01 at 1.10.27 PM.png)
+![Screenshot 2020-10-01 at 1.10.27 PM](assets/Screenshot 2020-10-01 at 1.10.27 PM.png)
 
 <p align="center"><em>Clipping of how request for sending mail looks like(Postman).</em></p>
 
