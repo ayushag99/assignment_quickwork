@@ -31,6 +31,8 @@ Send a `GET` request to `localhost:3000/`
 
 ### Storing Credentials from Google
 
+Create an app with redirection link as `localhost:3000/api/authorize`
+
 Download and store the credentials in credentials.json file in home directory, and then run the app
 
 ### Authorization
